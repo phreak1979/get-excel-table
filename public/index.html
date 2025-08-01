@@ -114,7 +114,7 @@
     clearBtn.addEventListener("click", () => {
       fileInput.value = "";
       outputTextarea.value = "";
-      document.getElementById("previewArea").innerHTML = "";
+      // document.getElementById("previewArea").innerHTML = "";
       const iframe = document.getElementById("tablePreviewFrame");
       const doc = iframe.contentDocument || iframe.contentWindow.document;
       doc.open();

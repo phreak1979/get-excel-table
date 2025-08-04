@@ -3,11 +3,37 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const inlineCss = require("inline-css");
-
+require('dotenv').config()
 const app = express();
 const PORT = 3000;
 
+app.use(basicAuth)
 app.use(express.static("public"));
+
+function basicAuth(req, res, next) {
+  const auth = req.headers.authorization;
+
+  if (!auth || !auth.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="Protected"');
+    return res.status(401).send('Authentication required.');
+  }
+
+  // Decode base64
+  const [username, password] = Buffer.from(auth.split(' ')[1], 'base64')
+    .toString()
+    .split(':');
+
+  // Compare to .env
+  if (
+    username === process.env.AUTH_USERNAME &&
+    password === process.env.AUTH_PASSWORD
+  ) {
+    return next();
+  }
+
+  res.set('WWW-Authenticate', 'Basic realm="Protected"');
+  return res.status(401).send('Invalid credentials.');
+}
 
 const upload = multer({ dest: "uploads/" });
 
